@@ -1,36 +1,113 @@
-
-/*Q1 : Write a program that dynamically allocates an 
-array ofintegers of size N, 
-where N is entered by the user. The programshould then 
-ask the user to enter N integers and store them inthe array. Finally,
- the program should print out the sum of allthe integers in the array.*/
-
-
-
 #include <iostream>
 using namespace std;
-int main()
-{
-    int N;
-    cout << "Enter the size of the array: ";
-    cin >> N;
 
-    int *arr = new int[N];
+class Person {
+private:
+    string name;
+    int age;
+    static int totalCount; cts
 
-    cout << "Enter " << N << " integers: ";
-    for (int i = 0; i < N; i++)
-    {
-        cin >> arr[i];
+public:
+    Person() : name(""), age(0) {
+        ++totalCount;
     }
 
-    int sum = 0;
-    for (int i = 0; i < N; i++)
-    {
-        sum += arr[i];
+    // Parameterized constructor
+    Person(const string& n, int a) : name(n), age(a) {
+        ++totalCount;
     }
 
-    cout << "Sum of all integers in the array: " << sum << endl;
+    virtual ~Person() {
+        --totalCount;
+    }
 
-    delete[] arr;
+    void setName(const string& n) { name = n; }
+
+    string getName() const { return name; }
+
+    void setAge(int a) { age = a; }
+
+    int getAge() const { return age; }
+
+    static int getTotalCount() { return totalCount; }
+
+    virtual void displayInfo() const {
+        cout << "Name: " << name << endl;
+        cout << "Age: " << age << endl;
+    }
+};
+
+int Person::totalCount = 0;
+
+class Student : public Person {
+private:
+    string studentId;
+    char grade;
+
+public:
+    Student() : Person(), studentId(""), grade('F') {}
+
+    Student(const string& n, int a, const string& id, char g)
+        : Person(n, a), studentId(id), grade(g) {}
+
+    ~Student() {}
+
+    void setStudentId(const string& id) { studentId = id; }
+
+    string getStudentId() const { return studentId; }
+
+    void setGrade(char g) { grade = g; }
+
+    char getGrade() const { return grade; }
+
+    void displayInfo() const override {
+        Person::displayInfo(); // Call base class displayInfo
+        cout << "Student ID: " << studentId << endl;
+        cout << "Grade: " << grade << endl;
+    }
+};
+
+class Teacher : public Person {
+private:
+    string employeeId;
+    string subject;
+
+public:
+    Teacher() : Person(), employeeId(""), subject("") {}
+
+    Teacher(const string& n, int a, const string& id, const string& sub)
+        : Person(n, a), employeeId(id), subject(sub) {}
+
+    ~Teacher() {}
+
+    void setEmployeeId(const string& id) { employeeId = id; }
+
+    string getEmployeeId() const { return employeeId; }
+
+    void setSubject(const string& sub) { subject = sub; }
+
+    string getSubject() const { return subject; }
+
+    void displayInfo() const override {
+        Person::displayInfo(); 
+        cout << "Employee ID: " << employeeId << endl;
+        cout << "Subject: " << subject << endl;
+    }
+};
+
+int main() {
+    Student student("Alice", 20, "S12345", 'A');
+    Teacher teacher("Bob", 40, "T54321", "Mathematics");
+
+    cout << "Student Info:" << std::endl;
+    student.displayInfo();
+    cout << endl;
+
+    cout << "Teacher Info:" << endl;
+    teacher.displayInfo();
+    cout << endl;
+
+    cout << "Total Person objects created: " << Person::getTotalCount() << endl;
+
     return 0;
 }
